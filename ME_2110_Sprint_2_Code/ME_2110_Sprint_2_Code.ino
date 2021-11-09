@@ -37,7 +37,10 @@ unsigned long timer3 = 99999;
 //Boolean state for if rocket is lifted
 boolean rocketLifted = false;
 //Timer for system
-unsigned long systemTimer = 99999;
+unsigned long systemTimer = 999999;
+//Boolean state for if system timer has started
+boolean timerStarted = false;
+
 void setup() {
 
   Serial.begin(9600);
@@ -84,12 +87,14 @@ void loop() {
     robot.moveMotor(1,1,0);
   }
 
-  if (platformDetected && (millis() < systemTimer)) {
-    liftRocket();
+  if (millis() < systemTimer) {
+    
+    if (platformDetected) {
+
+      //liftRocket();
+    }
   }
-
-  if (millis() >= systemTimer) {
-
+  else {
     stopSystem();
   }
 }
@@ -101,7 +106,12 @@ void startSystem() {
   but1 = robot.readButton(5);
   if (but1 == 1) {
     systemStarted = true;
-    systemTimer = millis() + 40000;
+
+    if (!timerStarted) {
+      systemTimer = millis() + 35000;
+      timerStarted = true;
+    }
+    
   }
 }
 
@@ -109,7 +119,7 @@ void detectPlatform() {
 
   ultrasonicVal = robot.readUltrasonic();
   Serial.println("Ultra val: " + String(ultrasonicVal));
-  if (ultrasonicVal <= 8) {
+  if (ultrasonicVal <= 9) {
     platformDetected = true;
   }
   
@@ -139,7 +149,7 @@ void releaseCars() {
 void detectBuzz() {
 
   ultrasonicVal = robot.readUltrasonic();
-  if (ultrasonicVal >= 14) {
+  if (ultrasonicVal >= 11) {
     buzzDetected = true;
   }
 }
